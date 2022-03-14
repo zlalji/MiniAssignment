@@ -59,7 +59,7 @@ app.post("/dialogflow", express.json(), (req, res) => {
     const data = botParametersDoc.data();
     console.log(JSON.stringify(data));
   }
-  //searching through the db and replace. Also spliting the string.
+  // changing a JSON to string
   function replaceAll(string, search, replace) {
     return string.split(search).join(replace);
   }
