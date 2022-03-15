@@ -65,11 +65,8 @@ app.post("/dialogflow", express.json(), (req, res) => {
   }
 
   async function vaildANI(req, res, db) {
-    //const collection_name = 'abcCreditUnion'
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     console.log('ValidAni: ' + ani);
-    const ranDoc = db.collection('abcCreditUnion').doc(ani);
-    //const doc1 = await ranDoc.get();
     const ranDoc2 = db.collection('abcCreditUnion');
 
     const Ran1 = await ranDoc2.where('PhoneNum', '==', ani).get();
@@ -126,23 +123,24 @@ app.post("/dialogflow", express.json(), (req, res) => {
       res.json(jsonResponse);
     });
   }
-
+  //ln 131: gets number in paramters
+  //ln 138: grabbing docid
   async function updatePhoneNumber(req, res, db) {
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     var document = "";
     console.log('ValidAni: ' + ani);
-    let number_updated = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['number_updated']), '"', '');//gets number in paramters
+    let number_updated = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['number_updated']), '"', '');
     console.log(typeof (number_updated));
     db.collection("abcCreditUnion").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         console.log(`${doc.id} => ${doc.data().PhoneNum}`)
         if (number_updated == ani) {
-          document = doc.id; // grabbing docid 
+          document = doc.id;
           console.log('Number exists in DB');
         } else if (doc.data().PhoneNum == ani) {
           console.log("Updated Number");
           document = doc.id;
-          const checkNum = db.collection("abcCreditUnion").doc(document)
+          const checkNum = db.collection("abcCreditUnion").doc(document);
           checkNum.update({ PhoneNum: number_updated });
         }
       });
@@ -161,21 +159,25 @@ app.post("/dialogflow", express.json(), (req, res) => {
     };
     res.json(jsonResponse);
   }
-
+  //ln 165: gets from user
+  //ln 167: gets the collection
+  //ln 168: gets documents wherer number is eaqual
+  //ln 170: searching through the document
+  //ln 178: gets from the users
   async function check_pin(req, res, db) {
     let jsonResponse = {};
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
-    let checkPin = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['pin']), '"', ''); // gets from user
-    const ranDoc2 = db.collection('abcCreditUnion'); //gets the collection
-    const Ran1 = await ranDoc2.where('PhoneNum', '==', ani).get(); // gets documents wherer number is eaqual
-    Ran1.forEach(doc1 => { // searching through the document 
+    let checkPin = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['pin']), '"', '');
+    const ranDoc2 = db.collection('abcCreditUnion');
+    const Ran1 = await ranDoc2.where('PhoneNum', '==', ani).get();
+    Ran1.forEach(doc1 => {
       jsonResponse.sessionInfo = {
         parameters: {
           'pin1': doc1.data().pin
         }
       }
       const data = doc1.data();
-      const checkUserPin = JSON.stringify(doc1.data().pin); // gets from the users
+      const checkUserPin = JSON.stringify(doc1.data().pin);
       console.log(JSON.stringify(data));
       console.log(checkUserPin);
       if (checkPin === checkUserPin) {
@@ -217,14 +219,14 @@ app.post("/dialogflow", express.json(), (req, res) => {
       res.json(jsonResponse);
     })
   }
-
+  //ln 224: gets from the entities
   async function check_security_question(req, res, db) {
     let jsonResponse = {};
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     console.log('ValidAni: ' + ani);
     const ranDoc2 = db.collection('abcCreditUnion');
     const Ran1 = await ranDoc2.where('PhoneNum', '==', ani).get();
-    let checkSecQues1 = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['secans2']), '"', ''); // gets from the entities 
+    let checkSecQues1 = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['secans2']), '"', '');
     Ran1.forEach(doc1 => {
       jsonResponse.sessionInfo = {
         parameters: {
@@ -279,18 +281,22 @@ app.post("/dialogflow", express.json(), (req, res) => {
       res.json(jsonResponse);
     })
   }
-
+  //Checks to see if the document is empty or not (ln 283)
+  //gets the collection (ln 285)
+  // gets documents wherer number is eaqual (ln 286)
+  // searching through the document (ln 290)
+  // gets the stuff (name, number and pin etc) (ln 294-298)
   async function check_security_question2(req, res, db) {
     let jsonResponse = {};
-    let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', ''); // check to see if the document is empty or not.
+    let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     console.log('ValidAni: ' + ani);
-    const ranDoc2 = db.collection('abcCreditUnion'); //gets the collection
-    const Ran1 = await ranDoc2.where('PhoneNum', '==', ani).get(); // gets documents wherer number is eaqual 
+    const ranDoc2 = db.collection('abcCreditUnion');
+    const Ran1 = await ranDoc2.where('PhoneNum', '==', ani).get();
     let checkSecQues2 = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['securityquestion2answer']), '"', '');
 
-    Ran1.forEach(doc1 => { // searching through the document 
+    Ran1.forEach(doc1 => {
       jsonResponse.sessionInfo = {
-        parameters: { // gets the stuff (name, number and pin etc)
+        parameters: {
           'first_name': doc1.data().first_name,
           'last_name': doc1.data().last_name,
           'answer': doc1.data().validSecurityQuestion2
