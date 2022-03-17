@@ -63,7 +63,9 @@ app.post("/dialogflow", express.json(), (req, res) => {
   function replaceAll(string, search, replace) {
     return string.split(search).join(replace);
   }
-
+  // checking to see if the user has entered a valid number. If they have and see if that corresponds to a number in the db and make that 
+  //number have all the data ssociated w it. Line 80 will display msg when the user enter an invlaid number and ask user to enter the correct one
+  // that is assocaited w the account. If the number is correct and matches in the DB then line 113 will display the msg to the front end.
   async function vaildANI(req, res, db) {
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     console.log('ValidAni: ' + ani);
@@ -123,8 +125,9 @@ app.post("/dialogflow", express.json(), (req, res) => {
       res.json(jsonResponse);
     });
   }
-  //ln 132: gets number in paramters
-  //ln 138: grabbing docid
+  //This method is updating the phonenumber in the db. When the user enters a number that is not in the DB and are prompted w the msg "I
+  // noticed that you are calling from a new number. Would you like to update it" This method will allows them to update it when they type "yes in
+  // Dialog Flow CX". if user says that they want to update their number they will be prompted w the msg in line 157. 
   async function updatePhoneNumber(req, res, db) {
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     var document = "";
@@ -159,11 +162,8 @@ app.post("/dialogflow", express.json(), (req, res) => {
     };
     res.json(jsonResponse);
   }
-  //ln 170: gets from user
-  //ln 171: gets the collection
-  //ln 172: gets documents wherer number is eaqual
-  //ln 173: searching through the document
-  //ln 180: gets from the users
+  //This Method is checking if the user enters the correct pin associated w their account. Line 171 checks and sees if the number that is already
+  //in the DB matches the inforamtion associated w the number
   async function check_pin(req, res, db) {
     let jsonResponse = {};
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
@@ -186,14 +186,14 @@ app.post("/dialogflow", express.json(), (req, res) => {
             messages: [
               {
                 text: {
-                  text: ["Valid Pin "]
+                  text: ["Valid Pin "] //will be displayed if they enter the right pin
                 }
               }
             ]
           },
           sessionInfo: {
             parameters: {
-              'correct_answer3': true
+              'correct_answer3': true //user enters the correct pin Dialoglfow cx will be able to proceed to next step.
             }
           }
         }
@@ -210,7 +210,7 @@ app.post("/dialogflow", express.json(), (req, res) => {
           },
           sessionInfo: {
             parameters: {
-              'correct_answer3': false
+              'correct_answer3': false //user enters the wrong pin Dialoglfow cx will not be able to proceed to next step.
             }
           }
         };
@@ -219,7 +219,7 @@ app.post("/dialogflow", express.json(), (req, res) => {
       res.json(jsonResponse);
     })
   }
-  //ln 229: gets from the entities
+  //Checks the first security question that the user enters in the db. If they enter the correct security question they are propted with a welcome msg.
   async function check_security_question(req, res, db) {
     let jsonResponse = {};
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
@@ -281,20 +281,19 @@ app.post("/dialogflow", express.json(), (req, res) => {
       res.json(jsonResponse);
     })
   }
-  //Checks to see if the document is empty or not (ln 291)
-  //gets the collection (ln 293)
-  // gets documents wherer number is eaqual (ln 294)
-  // searching through the document (ln 297)
-  // gets the stuff (name, number and pin etc) (ln 298-304)
+  
+  //this function is ran when the user fails the first Sec Question. If they fail the first one they need to provide a valid answer for the 2nd
+  //sec question. If they provide a valid answer for the 2nd sec ques they are provdied with a welcome msg. If they fail both sec questions they
+  //will not be able to authentic their account.
   async function check_security_question2(req, res, db) {
     let jsonResponse = {};
-    let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
+    let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', ''); //Checks to see if the document is empty or not (ln 291)
     console.log('ValidAni: ' + ani);
-    const collection_name = db.collection('abcCreditUnion');
-    const number = await collection_name.where('PhoneNum', '==', ani).get();
+    const collection_name = db.collection('abcCreditUnion');//gets the collection (ln 293)
+    const number = await collection_name.where('PhoneNum', '==', ani).get(); // gets documents wherer number is eaqual (ln 294)
     let checkSecQues2 = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['securityquestion2answer']), '"', '');
 
-    number.forEach(docData => {
+    number.forEach(docData => {// gets the stuff (name, number and pin etc) (ln 298-304)
       jsonResponse.sessionInfo = {
         parameters: {
           'first_name': docData.data().first_name,
