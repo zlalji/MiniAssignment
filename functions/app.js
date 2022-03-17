@@ -59,13 +59,13 @@ app.post("/dialogflow", express.json(), (req, res) => {
     const data = botParametersDoc.data();
     console.log(JSON.stringify(data));
   }
-  // gets what you want out of the string/JSON and removes the informaton that is not needed
+  //gets what you want out of the string/JSON and removes the informaton that is not needed
   function replaceAll(string, search, replace) {
     return string.split(search).join(replace);
   }
-  // checking to see if the user has entered a valid number. If they have and see if that corresponds to a number in the db and make that 
+  //checking to see if the user has entered a valid number. If they have and see if that corresponds to a number in the db and make that 
   //number have all the data ssociated w it. Line 80 will display msg when the user enter an invlaid number and ask user to enter the correct one
-  // that is assocaited w the account. If the number is correct and matches in the DB then line 113 will display the msg to the front end.
+  //that is assocaited w the account. If the number is correct and matches in the DB then line 113 will display the msg to the front end.
   async function vaildANI(req, res, db) {
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     console.log('ValidAni: ' + ani);
@@ -126,8 +126,8 @@ app.post("/dialogflow", express.json(), (req, res) => {
     });
   }
   //This method is updating the phonenumber in the db. When the user enters a number that is not in the DB and are prompted w the msg "I
-  // noticed that you are calling from a new number. Would you like to update it" This method will allows them to update it when they type "yes in
-  // Dialog Flow CX". if user says that they want to update their number they will be prompted w the msg in line 157. 
+  //noticed that you are calling from a new number. Would you like to update it" This method will allows them to update it when they type "yes in
+  //Dialog Flow CX". if user says that they want to update their number they will be prompted w the msg in line 157. 
   async function updatePhoneNumber(req, res, db) {
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
     var document = "";
@@ -163,7 +163,7 @@ app.post("/dialogflow", express.json(), (req, res) => {
     res.json(jsonResponse);
   }
   //This Method is checking if the user enters the correct pin associated w their account. Line 171 checks and sees if the number that is already
-  //in the DB matches the inforamtion associated w the number
+  //in the DB matches the inforamtion associated w the number.
   async function check_pin(req, res, db) {
     let jsonResponse = {};
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', '');
@@ -281,10 +281,10 @@ app.post("/dialogflow", express.json(), (req, res) => {
       res.json(jsonResponse);
     })
   }
-  
+
   //this function is ran when the user fails the first Sec Question. If they fail the first one they need to provide a valid answer for the 2nd
   //sec question. If they provide a valid answer for the 2nd sec ques they are provdied with a welcome msg. If they fail both sec questions they
-  //will not be able to authentic their account.
+  //will not be able to be authenticed.
   async function check_security_question2(req, res, db) {
     let jsonResponse = {};
     let ani = replaceAll(JSON.stringify(req.body.sessionInfo.parameters['ani']), '"', ''); //Checks to see if the document is empty or not (ln 291)
