@@ -45,20 +45,7 @@ app.post("/dialogflow", express.json(), (req, res) => {
     };
     res.json(jsonResponse);
   }
-  //checking through the DB and see if the the collection contains this docID: '(789)5464444'. if it does then get the name and pin inputs from user 
-  async function check_database(req, res, db) {
-    let jsonResponse = {};
-    const botParametersDoc = await db.collection('abcCreditUnion').doc('(789)5464444').get();
-    jsonResponse.sessionInfo = {
-      parameters: {
-        'Name': botParametersDoc.data().companyName,
-        'pin': botParametersDoc.data().companyName
-      }
-    }
-    res.json(jsonResponse);
-    const data = botParametersDoc.data();
-    console.log(JSON.stringify(data));
-  }
+  
   //gets what you want out of the string/JSON and removes the informaton that is not needed
   function replaceAll(string, search, replace) {
     return string.split(search).join(replace);
