@@ -339,9 +339,6 @@ app.post("/dialogflow", express.json(), (req, res) => {
     case "welcome":
       welcomeMessage(req, res)
       break;
-    case "check_database":
-      check_database(req, res, db);
-      break;
     case "get_ani":
       vaildANI(req, res, db)
       break;
